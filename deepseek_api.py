@@ -6,27 +6,40 @@ class Chat_info:
     """定义chat初始化信息的类"""
     
     def __init__(self):
-        """设定默认值 包含api、温度、是否流式、是否推理"""
-        self.api = 'sk-d9afa1b3084c4e829f271ba454f7df1a'
+        """设定默认值 包含api-key、温度、是否流式输出、是否推理"""
+        self.api = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         self.temperature = 1.4
         self.stream = False
         self.reasoner = False
     
     def info_set(
         self,
-        api='sk-d9afa1b3084c4e829f271ba454f7df1a',
-        temperature=1.4,
-        stream=False,
-        reasoner=False
+        **kwargs
         ):
-        """改变chat的信息"""
-        self.api = api
-        self.temperature = temperature
-        self.stream = stream
-        self.reasoner = reasoner
+        """
+        改变chat的配置。
+        只更新传入的设置，其他设置保持不变。
+        有效形参名为：api、temperature、stream、reasoner
+        分别指api-key、模型温度、是否启用流式输出、是否启用推理（R1）
+        """
+        for key, value in kwargs.items():
+            if key == 'api':
+                self.api = value
+            elif key == 'temperature':
+                self.temperature = value
+            elif key == 'stream':
+                self.stream = value
+            elif key == 'reasoner':
+                self.reasoner = value
+            else:
+                print("\ninfo参数传入错误！")
+        # self.api = api
+        # self.temperature = temperature
+        # self.stream = stream
+        # self.reasoner = reasoner
     
     def info_print(self):
-        """输出当前chat的信息"""
+        """输出当前chat的配置信息，包括api-key、模型温度、是否启用流式输出、是否启用推理（R1）"""
         print("\nThe info of the chat is as follows:")
         print(f"api_key:     {self.api}")
         print(f"temperature: {self.temperature}")
@@ -61,7 +74,7 @@ class Chat(Chat_info):
             self.messages.append(message)
     
     def messages_print(self):
-        """用于打印当前messages列表信息的函数"""
+        """用于打印当前messages列表信息的函数，包含所有system设定、历史全部对话"""
         self.messages = sorted(self.messages, key=lambda x: x['role'] != 'system')
         print("\nThe contents of messages are as follows:")
         for message in self.messages:
@@ -76,20 +89,20 @@ class Chat(Chat_info):
                 print(message['content'])
     
     def chat_clear(self):
-        """用于清除当前对话数据的函数，不会清除sys设定"""
+        """用于清除当前历史对话数据的函数，不会清除sys设定"""
         for message in self.messages:
             if message['role'] != 'system':
                 del(message)
     
     def chat_reset(self):
-        """用于复位chat的函数，清除所有对话和system设定，不改变info"""
+        """用于复位chat的函数，清除所有历史对话数据和system设定，不改变info"""
         self.messages = []
     
     def send_messages(self):
         """
         核心函数，向服务器发送当前的messages列表，返回包含响应信息的字典
-        若流式开启，则会直接将结果打印在屏幕上，完毕后返回响应字典
-        若流式关闭，不会打印结果，响应完毕后返回字典
+        若流式开启，则会直接将结果打印在屏幕上，全部打印完毕后返回响应字典
+        若流式关闭，不会打印结果，全部响应完毕后返回字典
         返回字典reply_dict的键值为'reply_reasoning'和'reply_content'，
         分别为思考过程和答复结果，当不启用推理时，返回的思考过程为空字符串
         """
@@ -164,7 +177,7 @@ class Chat(Chat_info):
         return reply_dict
     
     def chat_once(self):
-        """只进行一次对话，对话后清除记录，不清除sys设定"""
+        """只进行一次对话，对话后清除对话历史记录，不清除sys设定"""
         prompt = "\nInput something:\n"
         message_text = input(prompt)
         message = {'role': 'user', 'content': message_text}
@@ -181,7 +194,7 @@ class Chat(Chat_info):
         self.chat_clear()
 
     def chat_lasting(self):
-        """循环对话模式"""
+        """开启循环对话模式，保留上下文，实现类似于网页版的chat交互"""
         while True:
             prompt = "\nInput something:\n"
             message_text = input(prompt)
