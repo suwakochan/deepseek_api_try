@@ -20,7 +20,7 @@
   
   3. 最后用chat.chat_lasting()函数即可启动循环对话
 
-Chat类可用函数及说明（以类实例chat为例）：
+## Chat类可用函数及说明（以类实例chat为例）：
 
   `chat.info_set(**kwargs): 改变chat的配置。只更新传入的设置，其他设置保持不变。有效形参名为：api、temperature、stream、reasoner，分别指api-key、模型温度、是否启用流式输出、是否启用推理（R1）`
   
