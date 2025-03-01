@@ -6,7 +6,7 @@
 ## 用前准备
 使用该模块前需要安装openai库，在命令行输入：
 
-  `python -m pip3 install openai`
+  `python -m pip install openai`
 
 ## 第一次运行：
   修改sample.py文件的chat.info_set()函数的api参数，即可使用默认参数运行。
